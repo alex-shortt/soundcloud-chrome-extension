@@ -17,14 +17,3 @@ for (var i = 0; i < listings.length; i++) {
     }
     titleBar.appendChild(hideButton);
 }
-
-
-/*
-
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: 0;
-    
-    in class="soundContext g-flex-row-centered  "
-*/
