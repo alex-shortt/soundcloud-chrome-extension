@@ -1,16 +1,26 @@
 {
-  "manifest_version": 2,
+    "manifest_version": 2,
 
-  "name": "Soundcloud Chrome Extension",
-  "description": "This will make the souncloud browsing experience much better \n TODO: Add option to hide lisiting, note where you left off,  ",
-  "version": "1.0",
+    "name": "Soundcloud Chrome Extension",
+    "description": "This will make the souncloud browsing experience much better \n TODO: Add option to hide lisiting, note where you left off,  ",
+    "version": "1.0",
 
-  "browser_action": {
-    "default_icon": "resources/icon.png",
-    "default_popup": "popup.html"
-  },
-  "permissions": [
+    "browser_action": {
+        "default_icon": "resources/icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
     "activeTab",
     "https://ajax.googleapis.com/"
-  ]
+    ],
+    "web_accessible_resources": [
+        "/resources/fontawesome-webfont.ttf",
+        "/resources/fontawesome-webfont.woff"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*"],
+            "css": ["resources/font-awesome.css", "resources/ext-main.css"]
+        }
+    ]
 }

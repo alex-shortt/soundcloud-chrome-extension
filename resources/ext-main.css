@@ -1,0 +1,12 @@
+.ext-hideButton{
+    font-size: 16pt !important;
+    color: #999 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+}
+
+.ext-hideButton:hover{
+    color: #666;
+}
