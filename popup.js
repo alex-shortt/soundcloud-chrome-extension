@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 file: "resources/font-awesome.css"
             });
             chrome.tabs.executeScript(null, {
+                file: "scripts/jquery.js"
+            });
+            chrome.tabs.executeScript(null, {
                 file: "scripts/hide-listing.js"
             });
         }

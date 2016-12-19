@@ -1,18 +1,18 @@
-console.log("running...");
-var listings = document.getElementsByClassName("soundList__item");
+var distance = 0;
 
+console.log("running...");
 
 function deleteListing(element) {
-    var songListing = element.parentNode.parentNode.parentNode.parentNode;
-    songListing.parentNode.removeChild(songListing);
+    var songListing = $(element).parent().parent().parent().parent();
+    songListing.parent().remove(songListing);
 }
 
 function downloadSong(element) {
-    var songListing = element.parentNode.parentNode.parentNode.parentNode;
+    var songListing = $(element).parent().parent().parent().parent();
     var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
     var title, artist, genre, art, link;
 
-    link = songListing.getElementsByClassName("soundTitle__title")[0].href;
+    link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
 
     var xhr = new XMLHttpRequest();
     console.log(link);
@@ -20,8 +20,14 @@ function downloadSong(element) {
     xhr.send();
 
     if (xhr.responseText == "") {
-        //scrape it
-        console.log("This track does not work!");
+        //figure this out later
+        console.log("This api does not work for this track. Skipping...");
+        /*
+        title = $(songListing).find(".soundTitle__title").text();
+        artist = $(songListing).find(".soundTitle__usernameText").text();
+        genre = $(songListing).find(".soundTitle__tagContent").text();
+        art = $(songListing).find(".sc-artwork").css('background-image').replace(/^url|[\(\)]/g, '').replace('200x200', '500x500');
+        */
         return false;
     } else {
         var result = JSON.parse(xhr.responseText);
@@ -47,13 +53,32 @@ function downloadSong(element) {
     return false;
 }
 
-for (var i = 0; i < listings.length; i++) {
-    console.log(listings[i]);
-    var titleBar = listings[i].getElementsByClassName("g-flex-row-centered")[0];
-    var hideButton = document.createElement("a");
-    hideButton.className = "fa fa-cloud-download ext-hideButton";
-    hideButton.onclick = function () {
-        return downloadSong(this);
-    }
-    titleBar.appendChild(hideButton);
+function updateSounds(offset) {
+    var sounds = $(".sound").each(function (i, obj) {
+        if (i > offset - 1) {
+            distance++;
+            var titleBar = $(obj).find(".g-flex-row-centered");
+            var hideButton = $("<a>", {
+                class: "fa fa-cloud-download ext-hideButton"
+            });
+            hideButton.click(function () {
+                return downloadSong(this);
+            });
+            titleBar.append(hideButton);
+            console.log("added download: " + i);
+        }
+    });
 }
+
+updateSounds(0);
+
+$(document).on("DOMNodeRemoved", function (a) {
+    $("#content").each(function (a, b) {
+        setTimeout(function () {
+            if ($(".sound").length > distance) {
+                updateSounds(distance);
+                console.log("add download button 7");
+            }
+        }, 5)
+    })
+});
