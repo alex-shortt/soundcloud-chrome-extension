@@ -30,9 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.tabs.executeScript(null, {
                 file: "scripts/jquery.js"
             });
-            chrome.tabs.executeScript(null, {
-                file: "scripts/hide-listing.js"
-            });
         }
     });
     chrome.tabs.executeScript('console.log("' + webName + '");');

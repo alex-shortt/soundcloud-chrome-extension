@@ -1,5 +1,3 @@
-var distance = 0;
-
 console.log("running...");
 
 function deleteListing(element) {
@@ -41,7 +39,7 @@ function downloadSong(element) {
     }
 
     console.log(artist + " - " + title + " >> " + genre + " >> " + art);
-    var download_link = "https://soundclouddownloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
+    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
 
     /*
     var downloadSong = new XMLHttpRequest();
@@ -54,25 +52,19 @@ function downloadSong(element) {
     return false;
 }
 
-function updateSounds(offset) {
-    var sounds = $(".sound").each(function (i, obj) {
-        if (i > offset - 1) {
-            distance++;
-            /*
-            var titleBar = $(obj).find(".soundTitle");
-            var hideButton = $("<a>", {
-                class: "fa fa-cloud-download ext-hideButton"
-            });
-            hideButton.click(function () {
-                return downloadSong(this);
-            });
-            titleBar.append(hideButton);
-            */
-            var tag = $(obj).find(".soundTitle__tag");
-            tag.removeAttr("href");
-            tag.click(function () {
-                return downloadSong(this);
-            });
+function addButton(sound) {
+    var buttonContainer = sound.find(".sc-button-group")[0];
+    $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
+    var newButton = sound.find(".sc-ext-download");
+    newButton.click(function () {
+        return downloadSong(this);
+    });
+}
+
+function updateSounds() {
+    $(".sound").each(function (i, obj) {
+        if ($(obj).find(".sc-ext-download").length == 0) {
+            addButton($(obj));
             console.log("added download: " + i);
         }
     });
@@ -83,10 +75,7 @@ updateSounds(0);
 $(document).on("DOMNodeRemoved", function (a) {
     $("#content").each(function (a, b) {
         setTimeout(function () {
-            if ($(".sound").length > distance) {
-                updateSounds(distance);
-                console.log("add download button 7");
-            }
+            updateSounds();
         }, 5)
     })
 });
