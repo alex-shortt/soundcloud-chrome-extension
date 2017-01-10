@@ -8,7 +8,8 @@ function deleteListing(element) {
 }
 
 function downloadSong(element) {
-    var songListing = $(element).parent().parent().parent().parent();
+    var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
+    console.log(songListing);
     var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
     var title, artist, genre, art, link;
 
@@ -40,7 +41,7 @@ function downloadSong(element) {
     }
 
     console.log(artist + " - " + title + " >> " + genre + " >> " + art);
-    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
+    var download_link = "https://soundclouddownloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
 
     /*
     var downloadSong = new XMLHttpRequest();
@@ -57,7 +58,8 @@ function updateSounds(offset) {
     var sounds = $(".sound").each(function (i, obj) {
         if (i > offset - 1) {
             distance++;
-            var titleBar = $(obj).find(".g-flex-row-centered");
+            /*
+            var titleBar = $(obj).find(".soundTitle");
             var hideButton = $("<a>", {
                 class: "fa fa-cloud-download ext-hideButton"
             });
@@ -65,6 +67,12 @@ function updateSounds(offset) {
                 return downloadSong(this);
             });
             titleBar.append(hideButton);
+            */
+            var tag = $(obj).find(".soundTitle__tag");
+            tag.removeAttr("href");
+            tag.click(function () {
+                return downloadSong(this);
+            });
             console.log("added download: " + i);
         }
     });

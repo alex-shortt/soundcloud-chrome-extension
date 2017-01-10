@@ -23,7 +23,7 @@
         {
             "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
             "css": ["resources/font-awesome.css", "resources/ext-main.css"],
-            "js": ["scripts/jquery.js"]
+            "js": ["scripts/jquery.js", "scripts/background.js"]
         }
     ]
 }
