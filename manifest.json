@@ -22,7 +22,7 @@
     "content_scripts": [
         {
             "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
-            "css": ["resources/font-awesome.css", "resources/ext-main.css"],
+            "css": ["resources/font-awesome.css", "resources/ext-main.css", "resources/remodal.css", "resources/remodal-default-theme.css"],
             "js": ["scripts/jquery.js", "scripts/background.js"]
         }
     ]

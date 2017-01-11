@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.tabs.executeScript(null, {
                 file: "scripts/jquery.js"
             });
+            chrome.tabs.executeScript(null, {
+                file: "scripts/remodal.min.js"
+            });
         }
     });
     chrome.tabs.executeScript('console.log("' + webName + '");');

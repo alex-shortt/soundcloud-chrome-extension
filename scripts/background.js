@@ -1,5 +1,3 @@
-console.log("Running Script...");
-
 console.log("running...");
 
 function deleteListing(element) {
@@ -72,7 +70,7 @@ function updateSounds() {
     });
 }
 
-updateSounds(0);
+updateSounds();
 
 $(document).on("DOMNodeRemoved", function (a) {
     $("#content").each(function (a, b) {
@@ -80,4 +78,38 @@ $(document).on("DOMNodeRemoved", function (a) {
             updateSounds();
         }, 5)
     })
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    getCurrentTabUrl(function (url) {
+        document.body.innerHTML = url.split('/')[2];
+        var webName = url.split('/')[2];
+        if (webName === "soundcloud.com") {
+            chrome.tabs.insertCSS(null, {
+                file: "resources/ext-main.css"
+            });
+            chrome.tabs.insertCSS(null, {
+                file: "resources/font-awesome.css"
+            });
+            chrome.tabs.executeScript(null, {
+                file: "scripts/jquery.js"
+            });
+            chrome.tabs.executeScript(null, {
+                file: "scripts/remodal.min.js"
+            });
+
+            $("body").append('<div data-remodal-id="modal">\
+                                <button data-remodal-action="close" class="remodal-close"></button>\
+                                  <h1>Remodal</h1>\
+                                  <p>\
+                                    Download\
+                                  </p>\
+                                </div>');
+
+            var options = {};
+            var modal = $('[data-remodal-id=modal]').remodal();
+            modal.open();
+        }
+    });
+    chrome.tabs.executeScript('console.log("' + webName + '");');
 });
