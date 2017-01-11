@@ -48,6 +48,8 @@ function populateForm(element) {
     }
     console.log(artist + " - " + title + " >> " + genre + " >> " + art);
     
+    $("#song-header-title").html(title);
+    
     $("#song-input-title").val(title);
     $("#song-input-title").addClass("active");
     $("#song-input-artist").addClass("active");
@@ -92,22 +94,26 @@ $(document).on("DOMNodeRemoved", function (a) {
 
 $("body").append('<div data-remodal-id="modal">\
                     <button data-remodal-action="close" class="remodal-close"></button>\
-                    <h1>Tyro - Hardcore</h1>\
+                    <h1 id="song-header-title">...</h1>\
                     <div class="song-form-wrapper">\
                         <form class="song-form">\
                             <div class="row">\
-                                <div class="col-md-6">\
+                                <div class="col-md-10 col-md-offset-1">\
                                     <input id="song-input-title" type="text" placeholder="Title" />\
                                 </div>\
-                                <div class="col-md-6">\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-10 col-md-offset-1">\
                                     <input id="song-input-artist" type="text" placeholder="Artist" />\
                                 </div>\
                             </div>\
                             <div class="row">\
-                                <div class="col-md-6">\
+                                <div class="col-md-10 col-md-offset-1">\
                                     <input id="song-input-album" type="text" placeholder="Album" />\
                                 </div>\
-                                <div class="col-md-6">\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-10 col-md-offset-1">\
                                     <input id="song-input-genre" type="text" placeholder="Genre" />\
                                 </div>\
                             </div>\
