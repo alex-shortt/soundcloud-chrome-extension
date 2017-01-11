@@ -1,4 +1,5 @@
 console.log("running...");
+var modal;
 
 function deleteListing(element) {
     var songListing = $(element).parent().parent().parent().parent();
@@ -6,6 +7,14 @@ function deleteListing(element) {
 }
 
 function downloadSong(element) {
+    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
+
+    var win = window.open(download_link, '_blank');
+
+    return false;
+}
+
+function populateForm(element) {
     var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
     console.log(songListing);
     var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
@@ -37,19 +46,18 @@ function downloadSong(element) {
         genre = result.genre;
         art = result.artwork_url.replace("large", "t500x500");
     }
-
     console.log(artist + " - " + title + " >> " + genre + " >> " + art);
-    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
+    
+    $("#song-input-title").val(title);
+    $("#song-input-title").addClass("active");
+    $("#song-input-artist").addClass("active");
+    $("#song-input-artist").val(artist);
+    $("#song-input-genre").addClass("active");
+    $("#song-input-genre").val(genre);
+    $("#song-input-album").addClass("active");
+    $("#song-input-album").val(title);
 
-    /*
-    var downloadSong = new XMLHttpRequest();
-    downloadSong.open('GET', "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art, false);
-    downloadSong.send();
-    */
-
-    var win = window.open(download_link, '_blank');
-
-    return false;
+    modal.open();
 }
 
 function addButton(sound) {
@@ -57,7 +65,7 @@ function addButton(sound) {
     $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
     var newButton = sound.find(".sc-ext-download");
     newButton.click(function () {
-        return downloadSong(this);
+        return populateForm(this);
     });
 }
 
@@ -80,36 +88,43 @@ $(document).on("DOMNodeRemoved", function (a) {
     })
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    getCurrentTabUrl(function (url) {
-        document.body.innerHTML = url.split('/')[2];
-        var webName = url.split('/')[2];
-        if (webName === "soundcloud.com") {
-            chrome.tabs.insertCSS(null, {
-                file: "resources/ext-main.css"
-            });
-            chrome.tabs.insertCSS(null, {
-                file: "resources/font-awesome.css"
-            });
-            chrome.tabs.executeScript(null, {
-                file: "scripts/jquery.js"
-            });
-            chrome.tabs.executeScript(null, {
-                file: "scripts/remodal.min.js"
-            });
+//https://developer.chrome.com/extensions/background_pages
 
-            $("body").append('<div data-remodal-id="modal">\
-                                <button data-remodal-action="close" class="remodal-close"></button>\
-                                  <h1>Remodal</h1>\
-                                  <p>\
-                                    Download\
-                                  </p>\
-                                </div>');
+$("body").append('<div data-remodal-id="modal">\
+                    <button data-remodal-action="close" class="remodal-close"></button>\
+                    <h1>Tyro - Hardcore</h1>\
+                    <div class="song-form-wrapper">\
+                        <form class="song-form">\
+                            <div class="row">\
+                                <div class="col-md-6">\
+                                    <input id="song-input-title" type="text" placeholder="Title" />\
+                                </div>\
+                                <div class="col-md-6">\
+                                    <input id="song-input-artist" type="text" placeholder="Artist" />\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-6">\
+                                    <input id="song-input-album" type="text" placeholder="Album" />\
+                                </div>\
+                                <div class="col-md-6">\
+                                    <input id="song-input-genre" type="text" placeholder="Genre" />\
+                                </div>\
+                            </div>\
+                            <div class="row">\
+                                <div class="col-md-4 col-md-offset-2">\
+                                    <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>\
+                                </div>\
+                                <div class="col-md-4">\
+                                    <button data-remodal-action="confirm" class="remodal-confirm">Download</button>\
+                                </div>\
+                            </div>\
+                        </form>\
+                    </div>\
+                </div>');
 
-            var options = {};
-            var modal = $('[data-remodal-id=modal]').remodal();
-            modal.open();
-        }
-    });
-    chrome.tabs.executeScript('console.log("' + webName + '");');
+var options = {};
+modal = $('[data-remodal-id=modal]').remodal();
+$('.song-form-wrapper').foxholder({
+    demo: 9
 });
