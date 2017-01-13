@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
 
-    "name": "Soundcloud Chrome Extension",
-    "description": "This will make the souncloud browsing experience much better \n TODO: Add option to hide lisiting, note where you left off,  ",
+    "name": "SoundDown",
+    "description": "Download soundcloud songs and edit mp3 metadata",
     "version": "1.0",
 
     "browser_action": {
@@ -16,14 +16,13 @@
         "https://soundcloud-downloader.herokuapp.com/*"
     ],
     "web_accessible_resources": [
-        "/resources/fontawesome-webfont.ttf",
-        "/resources/fontawesome-webfont.woff"
+        "resources/modal.html"
     ],
     "content_scripts": [
         {
             "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
-            "css": ["resources/font-awesome.css", "resources/bootstrap.min.css", "resources/ext-main.css", "resources/remodal.css", "resources/remodal-default-theme.css", "resources/foxholder-styles.css"],
-            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/foxholder.js", "scripts/background.js"]
+            "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
+            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/background.js"]
         }
     ]
 }

@@ -1,0 +1,120 @@
+.ext-hideButton {
+    font-size: 14pt !important;
+    color: #999 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+}
+
+.ext-hideButton:hover {
+    color: #666;
+}
+
+.song-form-wrapper {
+    margin-top: 40px;
+}
+
+.fancy-input-wrapper {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.button-row {
+    width: 60%;
+    margin: 25px auto;
+}
+
+.button-left {
+    float: left;
+}
+
+.button-right {
+    float: right;
+}
+
+.title-row {
+    height: 150px;
+    line-height: 150px;
+    display: table;
+}
+
+.song-header-title {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+.song-header-title-wrapper {
+    min-height: 150px;
+    width: 75%;
+    display: inline-block;
+    float: right;
+}
+
+.song-header-art-wrapper {
+    width: 23%;
+    display: inline-block;
+    float: left;
+}
+
+.fancy-input-input {
+    padding-left: 112px !important;
+    width: 100%;
+    background-color: transparent;
+    font-size: 17px;
+    color: rgb(34, 34, 34);
+    font-family: inherit;
+    box-shadow: none;
+    padding: 20px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(34, 34, 34);
+    border-image: initial;
+    transition: all 0.2s linear 0s;
+    outline: none !important;
+}
+
+.fancy-input-label::before {
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.fancy-input-label {
+    color: rgb(255, 255, 255);
+    transition: all 0.2s linear 0.1s;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    font-weight: 700;
+    margin-bottom: 0px;
+    background: transparent;
+    bottom: 1px;
+}
+
+.fancy-input-span {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0px 27px;
+}
+
+.fancy-input-overlay {
+    width: 101px;
+    height: 100%;
+    left: -141px;
+    left: 0px;
+    transition: all 0.2s linear 0s;
+    position: absolute;
+    top: 0px;
+    background-color: rgb(240, 76, 30);
+    z-index: -1;
+    /*border: 1px solid black;*/
+}

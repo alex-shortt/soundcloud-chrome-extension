@@ -6,60 +6,69 @@ function deleteListing(element) {
     songListing.parent().remove(songListing);
 }
 
-function downloadSong(element) {
-    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + title + "&album_art=" + art;
-
+function downloadSong(link, artist, title, genre, album, art) {
+    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + art;
     var win = window.open(download_link, '_blank');
-
     return false;
 }
 
+function setModalValues(link, artist, title, album, genre, art) {
+    $("#song-header-title").html(artist + " - " + title);
+    $("#song-header-title").attr('name', link);
+    $("#song-input-title").val(title);
+    $("#song-input-artist").val(artist);
+    $("#song-input-genre").val(genre);
+    $("#song-input-album").val(album);
+    $("#song-input-art").val(art);
+    $("#song-album-art").attr('src', art);
+}
+
+function getModalValues() {
+    var data = {};
+    data.link = $("#song-header-title").attr('name');
+    data.title = $("#song-input-title").val();
+    data.artist = $("#song-input-artist").val();
+    data.genre = $("#song-input-genre").val();
+    data.album = $("#song-input-album").val();
+    data.art = $("#song-input-art").val();
+    return data;
+}
+
 function populateForm(element) {
-    var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-    console.log(songListing);
+    var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
     var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
     var title, artist, genre, art, link;
 
     link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
 
-    var xhr = new XMLHttpRequest();
-    console.log(link);
-    xhr.open('GET', "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId), false);
-    xhr.send();
-
-    if (xhr.responseText == "") {
-        //figure this out later
-        console.log("This api does not work for this track. Skipping...");
-        /*
-        title = $(songListing).find(".soundTitle__title").text();
-        artist = $(songListing).find(".soundTitle__usernameText").text();
-        genre = $(songListing).find(".soundTitle__tagContent").text();
-        art = $(songListing).find(".sc-artwork").css('background-image').replace(/^url|[\(\)]/g, '').replace('200x200', '500x500');
-        */
-        return false;
-    } else {
-        var result = JSON.parse(xhr.responseText);
-        console.log(result);
-
-        title = result.title;
-        artist = result.user.username;
-        genre = result.genre;
-        art = result.artwork_url.replace("large", "t500x500");
-    }
-    console.log(artist + " - " + title + " >> " + genre + " >> " + art);
-    
-    $("#song-header-title").html(title);
-    
-    $("#song-input-title").val(title);
-    $("#song-input-title").addClass("active");
-    $("#song-input-artist").addClass("active");
-    $("#song-input-artist").val(artist);
-    $("#song-input-genre").addClass("active");
-    $("#song-input-genre").val(genre);
-    $("#song-input-album").addClass("active");
-    $("#song-input-album").val(title);
-
     modal.open();
+
+    $.ajax({
+        url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId),
+        method: "GET"
+    }).done(function (data) {
+        console.log(data);
+        if (data == "") {
+            //figure this out later
+            console.log("This api does not work for this track. Skipping...");
+            /*
+            title = $(songListing).find(".soundTitle__title").text();
+            artist = $(songListing).find(".soundTitle__usernameText").text();
+            genre = $(songListing).find(".soundTitle__tagContent").text();
+            art = $(songListing).find(".sc-artwork").css('background-image').replace(/^url|[\(\)]/g, '').replace('200x200', '500x500');
+            */
+            return false;
+        }
+
+        title = data.title;
+        artist = data.user.username;
+        genre = data.genre;
+        art = data.artwork_url.replace("large", "t500x500");
+
+        console.log(artist + " - " + title + " >> " + genre + " >> " + art);
+
+        setModalValues(link, artist, title, title, genre, art);
+    });
 }
 
 function addButton(sound) {
@@ -75,7 +84,6 @@ function updateSounds() {
     $(".sound").each(function (i, obj) {
         if ($(obj).find(".sc-ext-download").length == 0) {
             addButton($(obj));
-            console.log("added download: " + i);
         }
     });
 }
@@ -92,45 +100,26 @@ $(document).on("DOMNodeRemoved", function (a) {
 
 //https://developer.chrome.com/extensions/background_pages
 
-$("body").append('<div data-remodal-id="modal">\
-                    <button data-remodal-action="close" class="remodal-close"></button>\
-                    <h1 id="song-header-title">...</h1>\
-                    <div class="song-form-wrapper">\
-                        <form class="song-form">\
-                            <div class="row">\
-                                <div class="col-md-10 col-md-offset-1">\
-                                    <input id="song-input-title" type="text" placeholder="Title" />\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-10 col-md-offset-1">\
-                                    <input id="song-input-artist" type="text" placeholder="Artist" />\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-10 col-md-offset-1">\
-                                    <input id="song-input-album" type="text" placeholder="Album" />\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-10 col-md-offset-1">\
-                                    <input id="song-input-genre" type="text" placeholder="Genre" />\
-                                </div>\
-                            </div>\
-                            <div class="row">\
-                                <div class="col-md-4 col-md-offset-2">\
-                                    <button data-remodal-action="cancel" class="remodal-cancel">Cancel</button>\
-                                </div>\
-                                <div class="col-md-4">\
-                                    <button data-remodal-action="confirm" class="remodal-confirm">Download</button>\
-                                </div>\
-                            </div>\
-                        </form>\
-                    </div>\
-                </div>');
+$("body").append('<div data-remodal-id="modal" id="modal-wrapper"></div>');
+$("#modal-wrapper").load(chrome.extension.getURL("resources/modal.html"));
 
-var options = {};
-modal = $('[data-remodal-id=modal]').remodal();
-$('.song-form-wrapper').foxholder({
-    demo: 9
+modal = $('[data-remodal-id=modal]').remodal({
+    hashTracking: false
+});
+
+$(document).on('confirmation', '.remodal', function () {
+    var data = getModalValues();
+    downloadSong(data.link, data.artist, data.title, data.genre, data.album, data.art);
+});
+
+$(document).on('opened', '.remodal', function () {
+    $("body").css("padding-right", "0px");
+    $("#song-input-art").off('input').on("input", function () {
+        $("#song-album-art").attr('src', $("#song-input-art").val());
+        console.log("change!");
+    });
+});
+
+$(document).on('closing', '.remodal', function (e) {
+    setModalValues("", "", "", "", "", "");
 });
