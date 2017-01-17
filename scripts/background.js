@@ -7,6 +7,12 @@ function deleteListing(element) {
 }
 
 function downloadSong(link, artist, title, genre, album, art) {
+    link = encodeURI(link);
+    artist = encodeURI(artist);
+    title = encodeURI(title);
+    genre = encodeURI(genre);
+    album = encodeURI(album);
+    
     var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + art;
     var win = window.open(download_link, '_blank');
     return false;
