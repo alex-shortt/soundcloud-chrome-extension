@@ -6,14 +6,15 @@ function deleteListing(element) {
     songListing.parent().remove(songListing);
 }
 
-function downloadSong(link, artist, title, genre, album, art) {
-    link = encodeURI(link);
-    artist = encodeURI(artist);
-    title = encodeURI(title);
-    genre = encodeURI(genre);
-    album = encodeURI(album);
-    
-    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link.replace("https", "http") + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + art;
+function downloadSong(link, artist, title, genre, album, album_art) {
+    link = encodeURIComponent(link.replace("https", "http"));
+    artist = encodeURIComponent(artist);
+    title = encodeURIComponent(title);
+    genre = encodeURIComponent(genre);
+    album = encodeURIComponent(album);
+    album_art = encodeURIComponent(album_art);
+
+    var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + album_art;
     var win = window.open(download_link, '_blank');
     return false;
 }
