@@ -43,6 +43,7 @@
     height: 150px;
     line-height: 150px;
     display: table;
+    width: 100%;
 }
 
 .song-header-title {

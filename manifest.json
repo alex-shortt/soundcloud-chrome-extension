@@ -9,8 +9,12 @@
         "default_icon": "resources/icon.png",
         "default_popup": "popup.html"
     },
+    "background": {
+        "scripts": ["scripts/background.js"]
+    },
     "permissions": [
         "activeTab",
+        "downloads",
         "https://ajax.googleapis.com/",
         "https://*.soundcloud.com/*",
         "https://soundcloud-downloader.herokuapp.com/*"
@@ -22,7 +26,7 @@
         {
             "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
             "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
-            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/background.js"]
+            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
         }
     ]
 }

@@ -19,21 +19,6 @@ function hideListing() {
 document.addEventListener('DOMContentLoaded', function () {
     getCurrentTabUrl(function (url) {
         document.body.innerHTML = url.split('/')[2];
-        var webName = url.split('/')[2];
-        if (webName === "soundcloud.com") {
-            chrome.tabs.insertCSS(null, {
-                file: "resources/ext-main.css"
-            });
-            chrome.tabs.insertCSS(null, {
-                file: "resources/font-awesome.css"
-            });
-            chrome.tabs.executeScript(null, {
-                file: "scripts/jquery.js"
-            });
-            chrome.tabs.executeScript(null, {
-                file: "scripts/remodal.min.js"
-            });
-        }
     });
     chrome.tabs.executeScript('console.log("' + webName + '");');
 });
