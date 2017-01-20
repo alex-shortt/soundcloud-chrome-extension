@@ -10,14 +10,12 @@
         "default_popup": "popup.html"
     },
     "background": {
-        "scripts": ["scripts/jquery.js", "scripts/jquery.fileDownload.js", "scripts/background.js"]
+        "scripts": ["scripts/jquery.js", "scripts/background.js"]
     },
     "permissions": [
         "activeTab",
-        "downloads",
-        "https://ajax.googleapis.com/",
-        "https://*.soundcloud.com/*",
-        "https://soundcloud-downloader.herokuapp.com/*"
+        "unlimitedStorage",
+        "downloads"
     ],
     "web_accessible_resources": [
         "resources/modal.html"
@@ -26,7 +24,7 @@
         {
             "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
             "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
-            "js": ["scripts/jquery.js", "scripts/jquery.fileDownload.js", "scripts/remodal.min.js", "scripts/content.js"]
+            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
         }
     ]
 }
