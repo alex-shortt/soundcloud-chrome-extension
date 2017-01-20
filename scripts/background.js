@@ -1,5 +1,13 @@
 function downloadSongChrome(url, name) {
-    console.log(url);
+    $.fileDownload(url)
+        .done(function () {
+            alert('File download a success!');
+        })
+        .fail(function () {
+            alert('File download failed!');
+        });
+
+    return;
     chrome.downloads.download({
         url: url,
         filename: name + ".mp3"
