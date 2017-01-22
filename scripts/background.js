@@ -1,39 +1,63 @@
 function downloadSong(urlToSong, metadata) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', urlToSong, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            const arrayBuffer = xhr.response;
-            const writer = new ID3Writer(arrayBuffer);
-            writer.setFrame('TIT2', 'Home')
-                .setFrame('TPE1', ['Eminem', '50 Cent'])
-                .setFrame('TPE2', 'Eminem')
-                .setFrame('TALB', 'Friday Night Lights')
-                .setFrame('TYER', 2004)
-            writer.addTag();
-            const taggedSongBuffer = writer.arrayBuffer;
-            const blob = writer.getBlob();
-            const url = writer.getURL();
-            
-            chrome.downloads.download({
-                url: url,
-                filename: 'song with tags.mp3'
-            });
+    console.log(metadata);
+    var songXHR = new XMLHttpRequest();
+    songXHR.open('GET', urlToSong, true);
+    songXHR.responseType = 'arraybuffer';
+    songXHR.onerror = function () {
+        console.error('Network error getting song');
+    };
+
+    var albumXHR = new XMLHttpRequest();
+    albumXHR.open('GET', metadata.art, true);
+    albumXHR.responseType = 'arraybuffer';
+    albumXHR.onerror = function () {
+        console.error('Network error getting album cover');
+    };
+    
+    var coverArrayBuffer;
+
+    albumXHR.onload = function () {
+        if (albumXHR.status === 200) {
+            coverArrayBuffer = albumXHR.response;
+            songXHR.send();
         } else {
-            // handle error
-            console.error(xhr.statusText + ' (' + xhr.status + ')');
+            console.error(albumXHR.statusText + ' (' + albumXHR.status + ')');
         }
     };
-    xhr.onerror = function () {
-        // handle error
-        console.error('Network error');
+
+    songXHR.onload = function () {
+        if (songXHR.status === 200) {
+            var arrayBuffer = songXHR.response;
+            var writer = new ID3Writer(arrayBuffer);
+
+            console.log(arrayBuffer);
+            console.log(coverArrayBuffer);
+
+            writer.setFrame('TIT2', metadata.title)
+                .setFrame('TPE1', [metadata.artist])
+                .setFrame('TALB', metadata.album)
+                .setFrame('TCON', [metadata.genre]);
+            writer.addTag();
+            var taggedSongBuffer = writer.arrayBuffer;
+            var blob = writer.getBlob();
+            var url = writer.getURL();
+
+            var fileResultName = (metadata.artist + " - " + metadata.title).replace(/[\/:?*<>|]/g, '');
+
+            chrome.downloads.download({
+                url: url,
+                filename: fileResultName + '.mp3'
+            });
+        } else {
+            console.error(songXHR.statusText + ' (' + songXHR.status + ')');
+        }
     };
-    xhr.send();
+
+    albumXHR.send();
 }
 
 function downloadSongChrome(url, metadata) {
-    downloadSong(url, metatdata);
+    downloadSong(url, metadata);
     return;
 }
 

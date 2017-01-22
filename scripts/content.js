@@ -16,32 +16,6 @@ function deleteListing(element) {
     songListing.parent().remove(songListing);
 }
 
-function downloadSong(trackId, link, artist, title, genre, album, album_art) {
-    link = encodeURIComponent(link.replace("https", "http"));
-    artist = encodeURIComponent(artist);
-    title = encodeURIComponent(title);
-    genre = encodeURIComponent(genre);
-    album = encodeURIComponent(album);
-    album_art = encodeURIComponent(album_art);
-
-    $.ajax({
-        url: "https://api.soundcloud.com/i1/tracks/" + trackId + "/streams?client_id=a3e059563d7fd3372b49b37f00a00bcf",
-        method: "GET"
-    }).done(function (data) {
-        console.log(data);
-        var downloadLink = data.http_mp3_128_url;
-
-        chrome.runtime.sendMessage({
-            downloadLink: downloadLink,
-            filename: getModalValues()
-        });
-    });
-
-    //var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + album_art;
-    //var win = window.open(download_link, '_blank');
-    return false;
-}
-
 function setModalValues(trackId, link, artist, title, album, genre, art) {
     $("#song-header-title").html(artist + " - " + title);
     $("#song-input-title").val(title);
@@ -65,6 +39,35 @@ function getModalValues() {
     data.album = $("#song-input-album").val();
     data.art = $("#song-input-art").val();
     return data;
+}
+
+function downloadSong(trackId, link, artist, title, genre, album, album_art) {
+    link = encodeURIComponent(link.replace("https", "http"));
+    artist = encodeURIComponent(artist);
+    title = encodeURIComponent(title);
+    genre = encodeURIComponent(genre);
+    album = encodeURIComponent(album);
+    album_art = encodeURIComponent(album_art);
+
+    $.ajax({
+        url: "https://api.soundcloud.com/i1/tracks/" + trackId + "/streams?client_id=a3e059563d7fd3372b49b37f00a00bcf",
+        method: "GET"
+    }).done(function (data) {
+        console.log(data);
+        var downloadLink = data.http_mp3_128_url;
+
+        var meta = getModalValues();
+        setModalValues("", "", "", "", "", "", "");
+
+        chrome.runtime.sendMessage({
+            downloadLink: downloadLink,
+            metadata: meta
+        });
+    });
+
+    //var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + album_art;
+    //var win = window.open(download_link, '_blank');
+    return false;
 }
 
 function populateForm(element) {
@@ -152,8 +155,4 @@ $(document).on('opened', '.remodal', function () {
         $("#song-album-art").attr('src', $("#song-input-art").val());
         console.log("change!");
     });
-});
-
-$(document).on('closing', '.remodal', function (e) {
-    setModalValues("", "", "", "", "", "", "");
 });
