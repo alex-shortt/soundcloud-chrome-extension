@@ -33,7 +33,7 @@ function downloadSong(trackId, link, artist, title, genre, album, album_art) {
 
         chrome.runtime.sendMessage({
             downloadLink: downloadLink,
-            filename: artist + " - " + title
+            filename: getModalValues()
         });
     });
 

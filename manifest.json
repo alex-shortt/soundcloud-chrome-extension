@@ -10,12 +10,13 @@
         "default_popup": "popup.html"
     },
     "background": {
-        "scripts": ["scripts/jquery.js", "scripts/background.js"]
+        "scripts": ["scripts/jquery.js", "scripts/FileSaver.min.js", "scripts/browser-id3-writer.min.js", "scripts/background.js"]
     },
     "permissions": [
         "activeTab",
         "unlimitedStorage",
-        "downloads"
+        "downloads",
+        "downloads.shelf"
     ],
     "web_accessible_resources": [
         "resources/modal.html"
