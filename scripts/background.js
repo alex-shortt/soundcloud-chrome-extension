@@ -13,7 +13,7 @@ function downloadSong(urlToSong, metadata) {
     albumXHR.onerror = function () {
         console.error('Network error getting album cover');
     };
-    
+
     var coverArrayBuffer;
 
     albumXHR.onload = function () {
@@ -30,13 +30,11 @@ function downloadSong(urlToSong, metadata) {
             var arrayBuffer = songXHR.response;
             var writer = new ID3Writer(arrayBuffer);
 
-            console.log(arrayBuffer);
-            console.log(coverArrayBuffer);
-
             writer.setFrame('TIT2', metadata.title)
                 .setFrame('TPE1', [metadata.artist])
                 .setFrame('TALB', metadata.album)
-                .setFrame('TCON', [metadata.genre]);
+                .setFrame('TCON', [metadata.genre])
+                .setFrame('APIC', coverArrayBuffer);
             writer.addTag();
             var taggedSongBuffer = writer.arrayBuffer;
             var blob = writer.getBlob();
