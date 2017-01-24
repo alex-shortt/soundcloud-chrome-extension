@@ -1,4 +1,3 @@
-console.log("running...");
 var modal;
 var clientId = {
     cid1: "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K",
@@ -52,7 +51,7 @@ function downloadSong(trackId, link, artist, title, genre, album, album_art) {
     $.ajax({
         url: "https://api.soundcloud.com/i1/tracks/" + trackId + "/streams?client_id=a3e059563d7fd3372b49b37f00a00bcf",
         method: "GET"
-    }).done(function (data) {
+    }).done(function(data) {
         console.log(data);
         var downloadLink = data.http_mp3_128_url;
 
@@ -65,24 +64,26 @@ function downloadSong(trackId, link, artist, title, genre, album, album_art) {
         });
     });
 
-    //var download_link = "https://soundcloud-downloader.herokuapp.com/getSound?link=" + link + "&artist=" + artist + "&title=" + title + "&genre=" + genre + "&album=" + album + "&album_art=" + album_art;
-    //var win = window.open(download_link, '_blank');
     return false;
 }
 
-function populateForm(element) {
-    var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
+function populateForm(element, type) {
     var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
     var title, artist, genre, art, link;
 
-    link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
+    if (type == "individual") {
+        link = window.location.href;
+    } else {
+        var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
+        link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
+    }
 
     modal.open();
 
     $.ajax({
         url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId),
         method: "GET"
-    }).done(function (data) {
+    }).done(function(data) {
         console.log(data);
         if (data == "") {
             //figure this out later
@@ -108,28 +109,43 @@ function populateForm(element) {
     });
 }
 
-function addButton(sound) {
-    var buttonContainer = sound.find(".sc-button-group")[0];
-    $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
-    var newButton = sound.find(".sc-ext-download");
-    newButton.click(function () {
-        return populateForm(this);
-    });
+function addButton(sound, type) {
+    if (type == "sound") {
+        var buttonContainer = sound.find(".sc-button-group")[0];
+        $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
+        var newButton = sound.find(".sc-ext-download");
+        newButton.click(function() {
+            return populateForm(this);
+        });
+    } else if(type == "individual") {
+        var buttonContainer = sound.find(".sc-button-group")[0];
+        $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-medium sc-button-responsive">Download</button>');
+        var newButton = sound.find(".sc-ext-download");
+        newButton.click(function() {
+            return populateForm(this, "individual");
+        });
+    }
 }
 
 function updateSounds() {
-    $(".sound").each(function (i, obj) {
+    $(".sound").each(function(i, obj) {
         if ($(obj).find(".sc-ext-download").length == 0) {
-            addButton($(obj));
+            addButton($(obj), "sound");
+        }
+    });
+
+    $(".sc-button-toolbar.soundActions__medium").each(function(i, obj) {
+        if ($(obj).find(".sc-ext-download").length == 0) {
+            addButton($(obj), "individual");
         }
     });
 }
 
 updateSounds();
 
-$(document).on("DOMNodeRemoved", function (a) {
-    $("#content").each(function (a, b) {
-        setTimeout(function () {
+$(document).on("DOMNodeRemoved", function(a) {
+    $("#content").each(function(a, b) {
+        setTimeout(function() {
             updateSounds();
         }, 5)
     })
@@ -144,14 +160,14 @@ modal = $('[data-remodal-id=modal]').remodal({
     hashTracking: false
 });
 
-$(document).on('confirmation', '.remodal', function () {
+$(document).on('confirmation', '.remodal', function() {
     var data = getModalValues();
     downloadSong(data.id, data.link, data.artist, data.title, data.genre, data.album, data.art);
 });
 
-$(document).on('opened', '.remodal', function () {
+$(document).on('opened', '.remodal', function() {
     $("body").css("padding-right", "0px");
-    $("#song-input-art").off('input').on("input", function () {
+    $("#song-input-art").off('input').on("input", function() {
         $("#song-album-art").attr('src', $("#song-input-art").val());
         console.log("change!");
     });
