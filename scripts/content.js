@@ -10,11 +10,6 @@ var songInfo = {
     link: ""
 }
 
-function deleteListing(element) {
-    var songListing = $(element).parent().parent().parent().parent();
-    songListing.parent().remove(songListing);
-}
-
 function setModalValues(trackId, link, artist, title, album, genre, art) {
     $("#song-header-title").html(artist + " - " + title);
     $("#song-input-title").val(title);
@@ -40,23 +35,12 @@ function getModalValues() {
     return data;
 }
 
-function downloadSong(trackId, link, artist, title, genre, album, album_art) {
-    link = encodeURIComponent(link.replace("https", "http"));
-    artist = encodeURIComponent(artist);
-    title = encodeURIComponent(title);
-    genre = encodeURIComponent(genre);
-    album = encodeURIComponent(album);
-    album_art = encodeURIComponent(album_art);
-
+function downloadSong(meta) {
     $.ajax({
-        url: "https://api.soundcloud.com/i1/tracks/" + trackId + "/streams?client_id=a3e059563d7fd3372b49b37f00a00bcf",
+        url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
         method: "GET"
     }).done(function(data) {
-        console.log(data);
         var downloadLink = data.http_mp3_128_url;
-
-        var meta = getModalValues();
-        setModalValues("", "", "", "", "", "", "");
 
         chrome.runtime.sendMessage({
             downloadLink: downloadLink,
@@ -68,7 +52,6 @@ function downloadSong(trackId, link, artist, title, genre, album, album_art) {
 }
 
 function populateForm(element, type) {
-    var clientId = "pPmFkm7w8XvU1oRdViIbG2nMmhimho6K";
     var title, artist, genre, art, link;
 
     if (type == "individual") {
@@ -81,13 +64,12 @@ function populateForm(element, type) {
     modal.open();
 
     $.ajax({
-        url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId),
+        url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId.cid2),
         method: "GET"
     }).done(function(data) {
-        console.log(data);
         if (data == "") {
             //figure this out later
-            console.log("This api does not work for this track. Skipping...");
+            console.log("The API Request did not work properly, please try again...");
             /*
             title = $(songListing).find(".soundTitle__title").text();
             artist = $(songListing).find(".soundTitle__usernameText").text();
@@ -103,8 +85,6 @@ function populateForm(element, type) {
         genre = data.genre;
         art = data.artwork_url.replace("large", "t500x500");
 
-        console.log(artist + " - " + title + " >> " + genre + " >> " + art);
-
         setModalValues(trackId, link, artist, title, title, genre, art);
     });
 }
@@ -117,7 +97,7 @@ function addButton(sound, type) {
         newButton.click(function() {
             return populateForm(this);
         });
-    } else if(type == "individual") {
+    } else if (type == "individual") {
         var buttonContainer = sound.find(".sc-button-group")[0];
         $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-medium sc-button-responsive">Download</button>');
         var newButton = sound.find(".sc-ext-download");
@@ -141,8 +121,6 @@ function updateSounds() {
     });
 }
 
-updateSounds();
-
 $(document).on("DOMNodeRemoved", function(a) {
     $("#content").each(function(a, b) {
         setTimeout(function() {
@@ -150,8 +128,6 @@ $(document).on("DOMNodeRemoved", function(a) {
         }, 5)
     })
 });
-
-//https://developer.chrome.com/extensions/background_pages
 
 $("body").append('<div data-remodal-id="modal" id="modal-wrapper"></div>');
 $("#modal-wrapper").load(chrome.extension.getURL("resources/modal.html"));
@@ -162,13 +138,27 @@ modal = $('[data-remodal-id=modal]').remodal({
 
 $(document).on('confirmation', '.remodal', function() {
     var data = getModalValues();
-    downloadSong(data.id, data.link, data.artist, data.title, data.genre, data.album, data.art);
+    downloadSong(data);
 });
+
+function setImageURL(image_url) {
+    $("#song-album-art")
+      .on("load", function(){
+        $("#error-message-text").html("");
+      })
+      .on("error", function(){
+        $("#error-message-text").html("Note: The image link you entered is not valid. Attempting to download will require you to refresh the page.");
+      })
+      .attr("src", image_url);
+}
 
 $(document).on('opened', '.remodal', function() {
     $("body").css("padding-right", "0px");
     $("#song-input-art").off('input').on("input", function() {
-        $("#song-album-art").attr('src', $("#song-input-art").val());
-        console.log("change!");
+        setImageURL($("#song-input-art").val());
     });
+});
+
+$(document).on('closing', '.remodal', function() {
+    setModalValues("", "", "", "", "", "", "");
 });

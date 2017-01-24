@@ -104,3 +104,11 @@
     transition: all 0.2s linear 0s;
     outline: none !important;
 }
+
+.error-message {
+    padding: 0 10%;
+}
+
+.error-message-text {
+    color: red;
+}
