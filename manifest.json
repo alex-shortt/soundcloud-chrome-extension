@@ -3,7 +3,7 @@
 
     "name": "SoundDown",
     "description": "Download Soundcloud songs and edit mp3 metadata",
-    "version": "1.0",
+    "version": "1.1",
 
     "browser_action": {
         "default_icon": "resources/icon.png",
@@ -21,11 +21,9 @@
     "web_accessible_resources": [
         "resources/modal.html"
     ],
-    "content_scripts": [
-        {
-            "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*", "https://api.soundcloud.com/*"],
-            "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
-            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
-        }
-    ]
+    "content_scripts": [{
+        "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*"],
+        "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
+        "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
+    }]
 }
