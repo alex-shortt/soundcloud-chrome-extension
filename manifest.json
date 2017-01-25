@@ -14,9 +14,7 @@
     },
     "permissions": [
         "activeTab",
-        "unlimitedStorage",
-        "downloads",
-        "downloads.shelf"
+        "downloads"
     ],
     "web_accessible_resources": [
         "resources/modal.html"
@@ -25,5 +23,12 @@
         "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*"],
         "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
         "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
-    }]
+    }],
+    "content_scripts": [
+        {
+            "matches": ["http://*.soundcloud.com/*", "https://*.soundcloud.com/*"],
+            "css": ["css/ext-main.css", "css/remodal.css", "css/remodal-default-theme.css"],
+            "js": ["scripts/jquery.js", "scripts/remodal.min.js", "scripts/content.js"]
+        }
+    ]
 }

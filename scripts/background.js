@@ -40,7 +40,7 @@ function downloadSong(urlToSong, metadata) {
             var blob = writer.getBlob();
             var url = writer.getURL();
 
-            var fileResultName = (metadata.artist + " - " + metadata.title).replace(/[\/:?*<>|]/g, '');
+            var fileResultName = (metadata.artist + " - " + metadata.title).replace(/[\/:?*<>|.~`]/g, '');
 
             chrome.downloads.download({
                 url: url,
