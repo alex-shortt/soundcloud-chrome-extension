@@ -2,28 +2,47 @@
 <html>
 
 <head>
-    <title>Getting Started Extension's Popup</title>
-    <style>
-        body {
-            font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-            font-size: 100%;
-        }
+    <title>SoundDown</title>
 
-        #status {
-            /* avoid an excessively wide status text */
-            white-space: pre;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            max-width: 400px;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="popup.js"></script>
-    <h4 style="text-align:center">Options coming soon...</h4>
-    <h5 style="text-align:center">Contact alexander.shortt@gmail.com if you have any questions</h5>
+    <script src="scripts/jquery.js"></script>
+
+    <link rel="stylesheet" href="css/popup.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
 </head>
 
 <body>
+    <div class="options-header">
+        <h2>SoundDown Options</h2>
+    </div>
+    <ul>
+        <li>
+            <div class="circle">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </div>
+            <h4>Manually edit tags?</h4>
+            <input id="edit-check" type="checkbox" />
+            <label for="edit-check"><i class="fa fa-check"></i></label>
+        </li>
+        <li>
+            <div class="circle">
+                <i style="margin-left: 5px;" class="fa fa-folder-open" aria-hidden="true"></i>
+            </div>
+            <h4>Download in folder?</h4>
+            <input id="folder-check" type="checkbox" />
+            <label for="folder-check"><i class="fa fa-check"></i></label>
+        </li>
+        <li>
+            <div class="circle">
+                <i class="fa fa-soundcloud" aria-hidden="true"></i>
+            </div>
+            <h4>Follow my Soundcloud?</h4>
+            <input id="follow-check" type="checkbox" />
+            <label id="follow-check-label" for="follow-check"><i class="fa fa-arrow-right"></i></label>
+        </li>
+    </ul>
+    <h5 class="contact-text">Contact alexander.shortt@gmail.com if you have any questions or ideas</h5>
+
+    <script src="scripts/popup.js"></script>
 </body>
 
 </html>

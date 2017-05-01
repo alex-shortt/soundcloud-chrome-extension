@@ -35,6 +35,27 @@ function getModalValues() {
     return data;
 }
 
+function parseArtwork(url) {
+    if (url == null) {
+        url = "";
+    } else if (url.indexOf("t200x200") != -1) {
+        url = url.replace("t200x200", "t500x500");
+    } else if (url.indexOf("large") != -1) {
+        url = url.replace("large", "t500x500");
+    }
+
+    return url;
+}
+
+function trackEvent(category, action, label) {
+    chrome.runtime.sendMessage({
+        message: "track",
+        category: category,
+        action: action,
+        label: label
+    });
+}
+
 function downloadSong(meta) {
     $.ajax({
         url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
@@ -52,40 +73,58 @@ function downloadSong(meta) {
 }
 
 function populateForm(element, type) {
-    var title, artist, genre, art, link;
+    chrome.storage.local.get(["edit"], function(storage) {
+            var title, artist, genre, art, link, trackId, songListing;
 
-    if (type == "individual") {
-        link = window.location.href;
-    } else {
-        var songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
-    }
+            if (type == "individual") {
+                link = window.location.href;
+                songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().find(".l-listen-hero");
+            } else {
+                songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
+                link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
+            }
 
-    modal.open();
+            trackEvent('download-button', 'song link', link);
 
-    $.ajax({
-        url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId.cid2),
-        method: "GET"
-    }).done(function(data) {
-        if (data == "") {
-            //figure this out later
-            console.log("The API Request did not work properly, please try again...");
+            if (storage.edit) {
+                modal.open();
+            }
+
+            $.ajax({
+                url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId.cid2),
+                method: "GET"
+            }).done(function(data) {
+                if (data == "") {
+                    alert("The API Request did not work properly, please try again...");
+                    return false;
+                }
+
+                trackId = data.id;
+                title = data.title;
+                artist = data.user.username;
+                genre = data.genre;
+                art = parseArtwork(data.artwork_url);
+
+                setModalValues(trackId, link, artist, title, title, genre, art);
+                if (!storage.edit) {
+                    var data = getModalValues();
+                    console.log(data);
+                    downloadSong(data);
+                }
+            });
+
+            //scrape code -- can't get track id by scrapig, so basically useless
             /*
-            title = $(songListing).find(".soundTitle__title").text();
-            artist = $(songListing).find(".soundTitle__usernameText").text();
+            title = $(songListing).find(".soundTitle__title").find("span").text();
             genre = $(songListing).find(".soundTitle__tagContent").text();
-            art = $(songListing).find(".sc-artwork").css('background-image').replace(/^url|[\(\)]/g, '').replace('200x200', '500x500');
+            if (type == "individual") {
+                art = parseArtwork($(songListing).find(".sc-artwork .image__full").css('background-image').replace(/^url|[\(\)\"]/g, ''));
+                artist = $(songListing).find(".soundTitle__username").text().replace(/\r?\n|\r/, '').trim();
+            } else {
+                art = parseArtwork($(songListing).find(".sound__coverArt").find(".image__full").css('background-image').replace(/^url|[\(\)\"]/g, ''));
+                artist = $(songListing).find(".soundTitle__usernameText").text();
+            }
             */
-            return false;
-        }
-
-        trackId = data.id;
-        title = data.title;
-        artist = data.user.username;
-        genre = data.genre;
-        art = data.artwork_url.replace("large", "t500x500");
-
-        setModalValues(trackId, link, artist, title, title, genre, art);
     });
 }
 
@@ -139,19 +178,20 @@ modal = $('[data-remodal-id=modal]').remodal({
 $(document).on('confirmation', '.remodal', function() {
     var data = getModalValues();
     downloadSong(data);
+    trackEvent('modal', 'download', data.artist + ' - ' + data.title);
 });
 
 function setImageURL(image_url) {
     $("#song-album-art")
-      .on("load", function(){
-        $("#error-message-text").html("");
-        $("#download-button").prop("disabled", false);
-      })
-      .on("error", function(){
-        $("#error-message-text").html("Error: The image link you entered is not valid. Please fix your image link to download the song.");
-        $("#download-button").prop("disabled", true);
-      })
-      .attr("src", image_url);
+        .on("load", function() {
+            $("#error-message-text").html("");
+            $("#download-button").prop("disabled", false);
+        })
+        .on("error", function() {
+            $("#error-message-text").html("Error: The image link you entered is not valid. Please fix your image link to download the song.");
+            $("#download-button").prop("disabled", true);
+        })
+        .attr("src", image_url);
 }
 
 $(document).on('opened', '.remodal', function() {

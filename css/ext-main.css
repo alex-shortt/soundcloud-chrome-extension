@@ -99,7 +99,7 @@
     color: rgb(34, 34, 34);
     font-family: inherit;
     box-shadow: none;
-    padding: 20px;
+    padding: 20px 10px;
     border-image: initial;
     transition: all 0.2s linear 0s;
     outline: none !important;
