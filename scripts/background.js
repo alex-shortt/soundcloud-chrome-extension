@@ -58,10 +58,12 @@ function downloadSong(urlToSong, metadata) {
 
             var fileResultName = (metadata.artist + " - " + metadata.title).replace(/[\/:?*<>|.~`]/g, '');
 
+            const playlist = (metadata.playlist != null ? metadata.playlist.replace(/[\/:?*<>|.~`]/g, '') + "/" : "");
+
             chrome.storage.local.get(["folder"], function(items) {
                 chrome.downloads.download({
                     url: url,
-                    filename: (items.folder ? "SoundDown/" : "") + fileResultName + '.mp3'
+                    filename: (items.folder ? "SoundDown/" : "") + playlist + fileResultName + '.mp3'
                 });
             });
 
