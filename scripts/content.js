@@ -80,7 +80,7 @@ function populateForm(element, type) {
                 link = window.location.href;
                 songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().find(".l-listen-hero");
             } else {
-                songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent();
+                songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent();
                 link = "https://soundcloud.com" + $(songListing).find(".soundTitle__title").attr('href');
             }
 
