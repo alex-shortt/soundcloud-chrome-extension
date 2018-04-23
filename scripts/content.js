@@ -51,28 +51,26 @@ function trackEvent(category, action, label) {
   chrome.runtime.sendMessage({message: "track", category: category, action: action, label: label});
 }
 
-function downloadPlaylist(plist){
-  console.log(plist);
+function downloadPlaylist(plist) {
+  plist.tracks.forEach(function(track) {
+    var meta = {};
+    meta.link = track.permalink_url;
+    meta.id = track.id;
+    meta.title = track.title;
+    meta.artist = track.user.username;
+    meta.genre = track.genre;
+    meta.album = plist.title;
+    meta.art = track.artwork_url;
+    meta.playlist = plist.title;
 
-  plist.tracks.forEach(function(track){
-      var meta = {};
-      meta.link = track.permalink_url;
-      meta.id = track.id;
-      meta.title = track.title;
-      meta.artist = track.user.username;
-      meta.genre = track.genre;
-      meta.album = plist.title;
-      meta.art = track.artwork_url;
-      meta.playlist = plist.title;
+    $.ajax({
+      url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
+      method: "GET"
+    }).done(function(data) {
+      var downloadLink = data.http_mp3_128_url;
 
-      $.ajax({
-        url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
-        method: "GET"
-      }).done(function(data) {
-        var downloadLink = data.http_mp3_128_url;
-
-        chrome.runtime.sendMessage({downloadLink: downloadLink, metadata: meta});
-      });
+      chrome.runtime.sendMessage({downloadLink: downloadLink, metadata: meta});
+    });
   });
 }
 
@@ -99,7 +97,7 @@ function populateForm(element, type) {
       trackId,
       songListing;
 
-    if (type == "individual") {
+    if (type == "individual" || type == "playlist-individual") {
       link = window.location.href;
       songListing = $(element).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().parent().find(".l-listen-hero");
     } else {
@@ -109,7 +107,7 @@ function populateForm(element, type) {
 
     trackEvent('download-button', 'song link', link);
 
-    if (storage.edit && type != "playlist") {
+    if (storage.edit && type != "playlist" && type != "playlist-individual") {
       modal.open();
     }
 
@@ -130,10 +128,9 @@ function populateForm(element, type) {
 
       setModalValues(trackId, link, artist, title, title, genre, art);
 
-      if(type == "playlist"){
+      if (type == "playlist" || type == "playlist-individual") {
         downloadPlaylist(data);
-      }
-      else if (!storage.edit) {
+      } else if (!storage.edit) {
         var data = getModalValues();
         downloadSong(data);
       }
@@ -142,28 +139,15 @@ function populateForm(element, type) {
 }
 
 function addButton(sound, type) {
-  if (type == "sound") {
-    var buttonContainer = sound.find(".sc-button-group")[0];
-    $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
-    var newButton = sound.find(".sc-ext-download");
-    newButton.click(function() {
-      return populateForm(this);
-    });
-  } else if (type == "playlist") {
-    var buttonContainer = sound.find(".sc-button-group")[0];
-    $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-small sc-button-responsive">Download</button>');
-    var newButton = sound.find(".sc-ext-download");
-    newButton.click(function() {
-      return populateForm(this, "playlist");
-    });
-  } else if (type == "individual") {
-    var buttonContainer = sound.find(".sc-button-group")[0];
-    $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-medium sc-button-responsive">Download</button>');
-    var newButton = sound.find(".sc-ext-download");
-    newButton.click(function() {
-      return populateForm(this, "individual");
-    });
-  }
+  var buttonContainer = sound.find(".sc-button-group")[0];
+  $(buttonContainer).append('<button class="sc-ext-download sc-button sc-button-download sc-button-medium sc-button-responsive">Download</button>');
+  var newButton = sound.find(".sc-ext-download");
+  newButton.click(function() {
+    return populateForm(
+      this, type == "sound"
+      ? null
+      : type);
+  });
 }
 
 function updateSounds() {
@@ -179,7 +163,11 @@ function updateSounds() {
 
   $(".sc-button-toolbar.soundActions__medium").each(function(i, obj) {
     if ($(obj).find(".sc-ext-download").length == 0) {
-      addButton($(obj), "individual");
+      if (window.location.href.indexOf("sets") != -1) {
+        addButton($(obj), "playlist-individual");
+      } else {
+        addButton($(obj), "individual");
+      }
     }
   });
 }
