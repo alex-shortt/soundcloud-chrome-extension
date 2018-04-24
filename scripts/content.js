@@ -52,6 +52,7 @@ function trackEvent(category, action, label) {
 }
 
 function downloadPlaylist(plist) {
+  alert("Your playlist is now downloading. Be patient, this may take a while!");
   plist.tracks.forEach(function(track) {
     var meta = {};
     meta.link = track.permalink_url;
@@ -182,7 +183,6 @@ $(document).on("DOMNodeRemoved", function(a) {
 
 $("body").append('<div data-remodal-id="modal" id="modal-wrapper"></div>');
 $("#modal-wrapper").load(chrome.extension.getURL("resources/modal.html"));
-
 modal = $('[data-remodal-id=modal]').remodal({hashTracking: false});
 
 $(document).on('confirmation', '.remodal', function() {
