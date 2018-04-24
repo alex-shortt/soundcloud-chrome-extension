@@ -2,8 +2,8 @@
     "manifest_version": 2,
 
     "name": "SoundDown",
-    "description": "Download Soundcloud songs and edit mp3 metadata",
-    "version": "2.0",
+    "description": "Download Soundcloud songs/playlists and edit mp3 metadata",
+    "version": "3.0",
 
     "browser_action": {
         "default_icon": "resources/icon.png",
