@@ -48,7 +48,12 @@ function parseArtwork(url) {
 }
 
 function trackEvent(category, action, label) {
-  chrome.runtime.sendMessage({message: "track", category: category, action: action, label: label});
+  chrome.runtime.sendMessage({
+    message: "track",
+    category: category,
+    action: action,
+    label: label
+  });
 }
 
 function downloadPlaylist(plist) {
@@ -64,27 +69,20 @@ function downloadPlaylist(plist) {
     meta.art = track.artwork_url;
     meta.playlist = plist.title;
 
-    $.ajax({
-      url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
-      method: "GET"
-    }).done(function(data) {
-      var downloadLink = data.http_mp3_128_url;
-
-      chrome.runtime.sendMessage({downloadLink: downloadLink, metadata: meta});
+    chrome.runtime.sendMessage({
+      message: "download",
+      url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid1,
+      metadata: meta
     });
   });
 }
 
 function downloadSong(meta) {
-  $.ajax({
-    url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid2,
-    method: "GET"
-  }).done(function(data) {
-    var downloadLink = data.http_mp3_128_url;
-
-    chrome.runtime.sendMessage({downloadLink: downloadLink, metadata: meta});
+  chrome.runtime.sendMessage({
+    message: "download",
+    url: "https://api.soundcloud.com/i1/tracks/" + meta.id + "/streams?client_id=" + clientId.cid1,
+    metadata: meta
   });
-
   return false;
 }
 
@@ -112,11 +110,13 @@ function populateForm(element, type) {
       modal.open();
     }
 
-    $.ajax({
-      url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId.cid2),
-      method: "GET"
-    }).done(function(data) {
-      if (data == "") {
+    chrome.runtime.sendMessage({
+      message: "api",
+      url: "https://api.soundcloud.com/resolve.json?url=" + encodeURIComponent(link) + "&client_id=" + encodeURIComponent(clientId.cid1)
+    }, data => {
+      console.log(data)
+
+      if (data === "") {
         alert("The API Request did not work properly, please try again...");
         return false;
       }
@@ -136,6 +136,7 @@ function populateForm(element, type) {
         downloadSong(data);
       }
     });
+
   });
 }
 
@@ -145,9 +146,9 @@ function addButton(sound, type) {
   var newButton = sound.find(".sc-ext-download");
   newButton.click(function() {
     return populateForm(
-      this, type == "sound"
-      ? null
-      : type);
+      this, type == "sound" ?
+      null :
+      type);
   });
 }
 
@@ -183,7 +184,9 @@ $(document).on("DOMNodeRemoved", function(a) {
 
 $("body").append('<div data-remodal-id="modal" id="modal-wrapper"></div>');
 $("#modal-wrapper").load(chrome.extension.getURL("resources/modal.html"));
-modal = $('[data-remodal-id=modal]').remodal({hashTracking: false});
+modal = $('[data-remodal-id=modal]').remodal({
+  hashTracking: false
+});
 
 $(document).on('confirmation', '.remodal', function() {
   var data = getModalValues();
