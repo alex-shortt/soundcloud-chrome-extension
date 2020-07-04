@@ -4,3 +4,6 @@ This chrome extension allows you to download soundcloud songs by pressing the ad
 Get it here:
 
 https://chrome.google.com/webstore/detail/sounddown/ljjaomnfoepedhkncdffdadnpmckoohb
+
+# How to use
+Chrome are a bunch of dicks so the extension got taken down, you have to install it locally as an "unpacked" extension. Here's how to do it: https://webkul.com/blog/how-to-install-the-unpacked-extension-in-chrome/
